@@ -303,14 +303,28 @@ const personaPersonalityData: Record<string, PersonalityData> = {
 };
 
 export default function Profile() {
-  const { personaId } = useFulaStore();
+  const { personaId, setPersona } = useFulaStore();
   const [activeTab, setActiveTab] = useState<'account' | 'personality' | 'stress'>('account');
   const currentPersona = personas.find((p) => p.id === personaId);
 
-  if (!currentPersona) {
+  if (!personaId || !currentPersona) {
     return (
       <div className="max-w-5xl mx-auto py-12 px-4">
-        <div className="text-gray-900">Please select a persona from the header.</div>
+        <div className="text-center py-12 text-gray-900">
+          <p className="text-xl font-semibold mb-4">No Persona Selected</p>
+          <p className="text-gray-600 mb-6">Please select a persona from the home page to view their profile, or choose one below:</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-6">
+            {personas.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setPersona(p.id as any)}
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
+              >
+                {p.name}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
