@@ -1,0 +1,494 @@
+import type { Message, AgentStatus, Phase, AdvisorMessage, UserMessage } from '../types';
+
+const createAdvisorMessage = (
+  id: string,
+  friendly: string,
+  direct: string,
+  options?: {
+    severity?: 'Low' | 'Medium' | 'High';
+    cognition?: any;
+    followUpButtons?: string[];
+  }
+): AdvisorMessage => ({
+  id,
+  content: { friendly, direct },
+  severity: options?.severity,
+  cognition: options?.cognition,
+  followUpButtons: options?.followUpButtons,
+});
+
+const createUserMessage = (id: string, content: string): UserMessage => ({
+  id,
+  content,
+});
+
+export const persona1Transcript: Record<Phase, Message[]> = {
+  '00-02': [
+    {
+      type: 'user',
+      data: createUserMessage('u1-1', "I make good money. On paper I'm doing fine. But I still don't feel secure. Am I just being paranoid?"),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a1-1',
+        'That feeling is not automatically irrational. For high earners, the most common mistake is confusing income with safety.',
+        'Income is not safety. Many high earners fail because they confuse the two.',
+        {
+          cognition: {
+            signalsObserved: [
+              'Unease despite strong income',
+              'Implicit fear of "one bad year"',
+            ],
+            dataUsed: [
+              'Income vs monthly burn',
+              'Fixed obligations vs liquidity',
+            ],
+            lensApplied: 'Behavioral + liquidity',
+            conclusion: 'We evaluate runway and rigidity, not vibes.',
+            confidenceCaveats: 'We can be directionally confident even without perfect data.',
+          },
+        }
+      ),
+    },
+    {
+      type: 'user',
+      data: createUserMessage('u1-2', 'I save and invest every month. What exactly are you looking for?'),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a1-2',
+        "I'm looking for whether your freedom is increasing or whether your life is getting more expensive faster than your buffer.",
+        "I'm checking whether your buffer is growing slower than your obligations.",
+        {
+          cognition: {
+            signalsObserved: ['Consistent saving behavior'],
+            dataUsed: ['Savings rate proxy from balances', 'Monthly burn vs liquid assets'],
+            lensApplied: 'Directional progress',
+            conclusion: 'Measure runway and rigidity trend.',
+            confidenceCaveats: '',
+          },
+        }
+      ),
+    },
+  ],
+  '02-06': [
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a2-1',
+        "Here is your reality snapshot. I'm going to be specific.",
+        'Here is the snapshot. No comforting language.',
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a2-2',
+        "Your liquid assets support roughly 4–5 months of your current burn without income. That's not dangerous. It's not \"safe\" either.",
+        'You have ~4–5 months runway. That is thinner than you think.',
+        {
+          severity: 'Medium',
+          cognition: {
+            signalsObserved: [],
+            dataUsed: ['Liquid assets (checking+savings)', 'Monthly burn'],
+            lensApplied: 'Liquidity runway',
+            conclusion: 'Runway is modest relative to obligations.',
+            confidenceCaveats: '',
+          },
+        }
+      ),
+    },
+    {
+      type: 'user',
+      data: createUserMessage('u2-1', "Five months isn't terrible. Why does it still feel fragile?"),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a2-3',
+        "Because fragility is not just how long you can last. It's how many things can go wrong at once before you lose choice.",
+        "Because you're one overlap away from being forced to act.",
+        {
+          cognition: {
+            signalsObserved: [],
+            dataUsed: [],
+            lensApplied: 'Sequence risk',
+            conclusion: 'Overlaps drive failure, not averages.',
+            confidenceCaveats: '',
+          },
+        }
+      ),
+    },
+  ],
+  '06-10': [
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a3-1',
+        "Let's talk direction. People don't lose freedom in one event. They lose it in drift.",
+        'You lose freedom through drift, not disaster.',
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a3-2',
+        "Your net worth is rising. But your fixed costs are rising faster than your liquidity. That's the drift.",
+        'Your obligations are compounding faster than your buffer.',
+      ),
+    },
+    {
+      type: 'user',
+      data: createUserMessage('u3-1', "Isn't increasing fixed costs normal as you build wealth?"),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a3-3',
+        'It can be. The risk is when obligations become permanent but income is not.',
+        "Only if you assume income is permanent. It isn't.",
+        {
+          cognition: {
+            signalsObserved: [],
+            dataUsed: [],
+            lensApplied: 'Income volatility vs permanent obligations',
+            conclusion: 'Permanent obligations require larger buffers.',
+            confidenceCaveats: '',
+          },
+        }
+      ),
+    },
+  ],
+  '10-14': [
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a4-1',
+        'Here are the blind spots I see most often for high earners.',
+        'Here are the ways you fail quietly.',
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a4-2',
+        'Blind spot #1: Underestimating how stress changes decisions. You will not behave the same under pressure.',
+        "Blind spot #1: Your 'plan' assumes you behave rationally under stress. You won't.",
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a4-3',
+        'Blind spot #2: Assuming liquidity is available when needed. Liquidity disappears when confidence disappears.',
+        "Blind spot #2: Liquidity is not there when you want it. It's there when markets are calm.",
+        {
+          followUpButtons: [
+            'What am I missing?',
+            'Where is my thinking fragile?',
+            'Show me a liquidity crisis',
+            'Try to talk me out of buying a property',
+          ],
+        }
+      ),
+    },
+  ],
+  '14-18': [
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a5-1',
+        "I'm going to show you paths, not predictions.",
+        'We simulate failure, not comfort.',
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a5-2',
+        'Base path: income steady, moderate market returns, no major shocks. You slowly increase runway if spending stays flat.',
+        'Base path: nothing breaks, you keep drifting unless spending discipline holds.',
+        {
+          severity: 'Low',
+        }
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a5-3',
+        'Bad path: a 6-month income disruption plus modest market drawdown. Your liquidity falls fast; stress rises; you delay investing and recovery slows.',
+        'Bad path: 6 months disruption. Your buffer collapses. You start making defensive decisions.',
+        {
+          severity: 'Medium',
+        }
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a5-4',
+        'Ugly path: income disruption overlaps with a tightening credit market. Your options narrow, borrowing is expensive, selling is penalized, and your freedom timeline moves out dramatically.',
+        'Ugly path: overlap. You get trapped by timing.',
+        {
+          severity: 'High',
+        }
+      ),
+    },
+  ],
+  '18-22': [
+    {
+      type: 'user',
+      data: createUserMessage('u6-1', 'Okay. But I still want to buy an investment property. Talk me out of it.'),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a6-1',
+        "I will. Not because real estate is bad—because it can convert your liquidity into obligations.",
+        "I will. Because this is how high earners trap themselves.",
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a6-2',
+        "Here's the uncomfortable truth: you don't fail when the spreadsheet is wrong. You fail when timing is wrong.",
+        'You fail on timing, not math.',
+        {
+          severity: 'High',
+        }
+      ),
+    },
+  ],
+  '22-25': [
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a7-1',
+        'If you proceed, it must be under strict conditions.',
+        "Proceed only if you can't be harmed.",
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a7-2',
+        "Conditions:\n\n1) 12+ months post-purchase liquidity: If not, you risk forced selling.\n2) No refi dependence: If you need refi, you're betting on credit.\n3) Vacancy tolerance 6+ months: If not, stress arrives fast.\n4) Capex reserve prefunded: If not, you borrow under pressure.\n5) Exit without forced sale: If not, the market sets your price.\n6) Rate shock survivable: If not, payments become the crisis.\n7) Does not delay primary freedom goal: If yes, it's a distraction.\n8) You can walk away: If not, you're emotionally leveraged.",
+        'Conditions:\n\n1) 12+ months liquidity post-purchase or forced selling risk\n2) No refi dependence or you bet on credit\n3) 6+ months vacancy tolerance or stress arrives\n4) Capex reserve prefunded or you borrow under pressure\n5) Exit without forced sale or market sets price\n6) Rate shock survivable or payments become crisis\n7) Does not delay freedom goal or it is distraction\n8) You can walk away or you are emotionally leveraged.',
+        {
+          severity: 'High',
+        }
+      ),
+    },
+  ],
+  '25-28': [
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a8-1',
+        "Let's rehearse the crisis so you can recognize it.",
+        'Here is how you break.',
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a8-2',
+        'Crisis script:\n\n- Tenant leaves → 2 months vacancy\n- HVAC fails → $9k\n- Credit tightens → HELOC frozen\n- Your income disrupted → bonus canceled\n- Cash needed in 21 days\n- Brokerage down 18% (selling painful)\n\nConclusion:\n\nThis is where people discover that net worth is not liquidity.',
+        'Crisis script:\n\n- Tenant leaves → 2 months vacancy\n- HVAC fails → $9k\n- Credit tightens → HELOC frozen\n- Your income disrupted → bonus canceled\n- Cash needed in 21 days\n- Brokerage down 18% (selling painful)\n\nThis is where you find out net worth is useless without access.',
+        {
+          severity: 'High',
+        }
+      ),
+    },
+  ],
+  '28-30': [
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a9-1',
+        'My stance: caution. Wait unless every condition is met. Your freedom is worth more than activity.',
+        "My stance: do not proceed unless you can walk away today without regret.",
+      ),
+    },
+    {
+      type: 'advisor',
+      data: createAdvisorMessage(
+        'a9-2',
+        'Next Review Triggers:\n\n- If runway reaches 9 months, reassess.\n- If fixed costs fall below X% of income, reassess.\n- If you can fund capex reserves without reducing buffer, reassess.',
+        'Next Review Triggers:\n\n- Runway reaches 9 months → reassess\n- Fixed costs fall below threshold → reassess\n- Capex reserves funded without buffer reduction → reassess',
+      ),
+    },
+  ],
+};
+
+export const persona1Agents: Record<Phase, AgentStatus[]> = {
+  '00-02': [
+    {
+      name: 'Profile Analyzer',
+      status: 'Scanning',
+      inputs: 'Income vs monthly burn',
+      computation: 'Calculating fixed-cost ratio and obligation growth risk',
+      outputs: 'Fixed obligations identified',
+    },
+    {
+      name: 'Liquidity Sentinel',
+      status: 'Simulating',
+      inputs: 'Checking acct, savings, brokerage mix',
+      computation: 'Estimating runway under income interruption (3/6/12 months)',
+      outputs: 'Runway months calculated',
+    },
+    {
+      name: 'Behavioral Auditor',
+      status: 'Checking',
+      inputs: 'Anxiety signals vs rational threat',
+      computation: 'Checking anxiety vs rational threat signals',
+      outputs: 'Behavioral pattern noted',
+    },
+    {
+      name: 'Freedom Optimizer',
+      status: 'Projecting',
+      inputs: 'Current runway, obligations',
+      computation: 'Projecting time independence trajectory',
+      outputs: 'Trajectory baseline',
+    },
+    {
+      name: 'Risk Correlation Mapper',
+      status: 'Mapping',
+      inputs: 'Job + housing dependencies',
+      computation: 'Checking overlap risk (job + housing)',
+      outputs: 'Overlap risk score',
+    },
+  ],
+  '02-06': [
+    {
+      name: 'Profile Analyzer',
+      status: 'Completed',
+      inputs: 'Income vs monthly burn',
+      computation: 'Fixed-cost ratio calculated',
+      outputs: 'High fixed-cost ratio identified',
+    },
+    {
+      name: 'Liquidity Sentinel',
+      status: 'Completed',
+      inputs: 'Checking + savings',
+      computation: 'Runway calculation',
+      outputs: '4-5 months runway',
+    },
+    {
+      name: 'Behavioral Auditor',
+      status: 'Completed',
+      inputs: 'Anxiety signals',
+      computation: 'Rationality check',
+      outputs: 'Anxiety is rational',
+    },
+    {
+      name: 'Freedom Optimizer',
+      status: 'Completed',
+      inputs: 'Runway months',
+      computation: 'TII calculation',
+      outputs: 'Time Independence Index: 4-5 months',
+    },
+    {
+      name: 'Risk Correlation Mapper',
+      status: 'Completed',
+      inputs: 'Job + housing',
+      computation: 'Overlap analysis',
+      outputs: 'Single narrative risk present',
+    },
+  ],
+  '06-10': [
+    {
+      name: 'Profile Analyzer',
+      status: 'Completed',
+      inputs: 'Historical trend data',
+      computation: 'Fixed cost creep analysis',
+      outputs: 'Obligations rising faster than liquidity',
+    },
+    {
+      name: 'Liquidity Sentinel',
+      status: 'Completed',
+      inputs: 'Liquidity trend',
+      computation: 'Directional drift calculation',
+      outputs: 'Negative drift identified',
+    },
+  ],
+  '10-14': [
+    {
+      name: 'Behavioral Auditor',
+      status: 'Checking',
+      inputs: 'Planned behavior vs stress behavior',
+      computation: 'Stress behavior prediction',
+      outputs: 'Behavior will change under pressure',
+    },
+    {
+      name: 'Liquidity Sentinel',
+      status: 'Simulating',
+      inputs: 'Market conditions + credit availability',
+      computation: 'Liquidity disappearance simulation',
+      outputs: 'Liquidity not guaranteed when needed',
+    },
+  ],
+  '14-18': [
+    {
+      name: 'Risk Correlation Mapper',
+      status: 'Simulating',
+      inputs: 'Multiple risk factors',
+      computation: 'Overlap failure path simulation',
+      outputs: 'Base/Bad/Ugly paths generated',
+    },
+  ],
+  '18-22': [
+    {
+      name: 'Liquidity Sentinel',
+      status: 'Simulating',
+      inputs: 'Investment property assumptions',
+      computation: 'Modeling vacancy + capex shock + refi unavailable',
+      outputs: 'Timing risk high',
+    },
+    {
+      name: 'Risk Correlation Mapper',
+      status: 'Mapping',
+      inputs: 'Job + real estate dependencies',
+      computation: 'Mapping job + real estate overlap',
+      outputs: 'Overlap risk increases',
+    },
+    {
+      name: 'Behavioral Auditor',
+      status: 'Checking',
+      inputs: 'Property purchase optimism',
+      computation: "Checking optimism bias ('it will cash-flow')",
+      outputs: 'Optimism bias detected',
+    },
+  ],
+  '22-25': [
+    {
+      name: 'Profile Analyzer',
+      status: 'Scanning',
+      inputs: 'All conditions',
+      computation: 'Condition validation',
+      outputs: '8 conditions to check',
+    },
+  ],
+  '25-28': [
+    {
+      name: 'Liquidity Sentinel',
+      status: 'Simulating',
+      inputs: 'Crisis scenario',
+      computation: 'Liquidity drill simulation',
+      outputs: 'Time-to-cash ladder under stress',
+    },
+  ],
+  '28-30': [
+    {
+      name: 'Freedom Optimizer',
+      status: 'Completed',
+      inputs: 'Final assessment',
+      computation: 'Stance determination',
+      outputs: 'Stance: Caution',
+    },
+  ],
+};
