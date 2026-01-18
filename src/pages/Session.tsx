@@ -17,11 +17,13 @@ import {
 } from '../utils/calculators';
 
 export default function Session() {
-  const { personaId } = useParams<{ personaId: string; scenarioId: string }>();
+  const { personaId, scenarioId } = useParams<{ personaId: string; scenarioId: string }>();
   const {
     tone,
     currentPhase,
     setPhase,
+    setPersona,
+    setScenario,
     messages,
     setMessages,
     agentConsole,
@@ -29,6 +31,16 @@ export default function Session() {
     updateEvidenceCards,
     updateVisuals,
   } = useFulaStore();
+
+  // Update store with URL params
+  useEffect(() => {
+    if (personaId) {
+      setPersona(personaId as any);
+    }
+    if (scenarioId) {
+      setScenario(scenarioId as any);
+    }
+  }, [personaId, scenarioId, setPersona, setScenario]);
 
   const persona = personas.find((p) => p.id === personaId);
   const transcript = personaId ? personaTranscripts[personaId as '1' | '2' | '3' | '4'] : null;
