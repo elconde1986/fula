@@ -332,6 +332,17 @@ export default function Profile() {
   const profile = currentPersona.profile;
   const pawResult = calculatePAWRatio(profile);
   const personality = personaPersonalityData[currentPersona.id];
+  
+  if (!personality) {
+    return (
+      <div className="max-w-5xl mx-auto py-12 px-4">
+        <div className="text-center py-12 text-gray-900">
+          <p className="text-xl font-semibold mb-4">Personality Data Not Found</p>
+          <p className="text-gray-600">Personality data for this persona is not available.</p>
+        </div>
+      </div>
+    );
+  }
 
   const archetypeColors = {
     PAW: 'bg-emerald-100 text-emerald-800 border-emerald-300',
